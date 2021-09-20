@@ -1,6 +1,8 @@
+import { useDispatch, useSelector } from "react-redux";
+
 import Button from "../components/Button";
 import Input from "../components/Input";
-import { useDispatch, useSelector } from "react-redux";
+
 import {
   sortByName,
   sortByDate,
@@ -10,7 +12,7 @@ import {
 } from "../noteSlice";
 
 export default function Header() {
-  const { notes, filter, input } = useSelector((state) => state.noteState);
+  const { filter, input } = useSelector((state) => state.noteState);
   const dispatch = useDispatch();
 
   return (
@@ -18,12 +20,12 @@ export default function Header() {
       <div className="todo-sorting">
         <Button
           className="sort-name"
-          onClick={() => dispatch(sortByName(notes))}
+          onClick={() => dispatch(sortByName())}
           text="Sort by Name"
         />
         <Button
           className="sort-date"
-          onClick={() => dispatch(sortByDate(notes))}
+          onClick={() => dispatch(sortByDate())}
           text="Sort by Date"
         />
         <Input
@@ -43,7 +45,7 @@ export default function Header() {
           autoFocus
         />
         <Button
-          onClick={() => dispatch(createNote({ input, notes }))}
+          onClick={() => dispatch(createNote())}
           className="add"
           text="ADD"
         />

@@ -1,33 +1,34 @@
 import { createSlice } from "@reduxjs/toolkit";
+
 import getFakeData from "./data/mock-data";
 
 const initialState = {
-    notes: JSON.parse(localStorage.getItem("notes")) || getFakeData(),
-    input: "",
-    filter: "",
-  },
-  sendToLocalStorage = (item) => {
-    localStorage.setItem("notes", JSON.stringify(item));
-  };
+  notes: JSON.parse(localStorage.getItem("notes")) || getFakeData(),
+  input: "",
+  filter: "",
+};
+
+const sendToLocalStorage = (item) => {
+  localStorage.setItem("notes", JSON.stringify(item));
+};
 
 export const noteSlice = createSlice({
   name: "notes",
   initialState,
   reducers: {
     //Creating new note
-    createNote: (state, action) => {
-      if (!action.payload.input) {
+    createNote: (state) => {
+      if (!state.input) {
         alert("Write something...");
         return;
       }
       const date = new Date();
-      const newNote = {
-        text: action.payload.input,
+      state.notes.push({
+        text: state.input,
         checked: false,
         date: `${date.toLocaleString()}`,
         id: Date.now(date),
-      };
-      state.notes.push(newNote);
+      });
       sendToLocalStorage(state.notes);
       state.input = "";
     },
@@ -36,22 +37,18 @@ export const noteSlice = createSlice({
     },
 
     //Sorting notes
-    sortByName: (state, action) => {
-      const newNotes = [...action.payload];
-      newNotes.sort((a, b) => {
-        if (a.text < b.text) return 1;
+    sortByName: (state) => {
+      state.notes.sort((a, b) => {
+        if (a.text > b.text) return 1;
         else return -1;
       });
-      state.notes = newNotes;
     },
 
-    sortByDate: (state, action) => {
-      const newNotes = [...action.payload];
-      newNotes.sort((a, b) => {
+    sortByDate: (state) => {
+      state.notes.sort((a, b) => {
         if (a.id < b.id) return 1;
         else return -1;
       });
-      state.notes = newNotes;
     },
 
     handleChangeFilter: (state, action) => {
@@ -60,7 +57,7 @@ export const noteSlice = createSlice({
 
     //Operations with notes
     checkNote: (state, action) => {
-      state.notes = JSON.parse(JSON.stringify(state.notes)).map((note) => {
+      state.notes = state.notes.map((note) => {
         if (note.id === action.payload) {
           note.checked = !note.checked;
         }
